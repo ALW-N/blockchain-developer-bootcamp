@@ -13,7 +13,7 @@ describe('Exchange', () => {
         const Exchange = await ethers.getContractFactory('Exchange')
         const Token = await ethers.getContractFactory('Token')
 
-        token1 = await Token.deploy('EDGE', 'EGE' , '1000000')
+        token1 = await Token.deploy('EDGE', 'EDGE' , '1000000')
         token2 = await Token.deploy(' Real Dai', 'Dai', '1000000')
 
         accounts = await ethers.getSigners()
@@ -187,6 +187,15 @@ describe('Exchange', () => {
           transaction = await exchange.connect(user1).depositToken(token1.address, amount)
           result = await transaction.wait()
 
+          transaction = await token2.connect(deployer).transfer(user2.address, tokens(100))
+          result = await transaction.wait()
+
+          transaction = await token2.connect(user2).approve(exchange.address, tokens(2))
+          result = await transaction.wait()
+
+          transaction = await exchange.connect(user2).depositToken(token2.address, tokens(2))
+          result = await transaction.wait()
+
           // Make an order
           transaction = await exchange.connect(user1).makeOrder(token2.address, amount, token1.address, amount)
           result = await transaction.wait()
@@ -239,11 +248,66 @@ describe('Exchange', () => {
             it('rejects unauthorized cancelations', async () => {
               await expect(exchange.connect(user2).cancelOrder(1)).to.be.reverted
             })
-
           })
+        })
+
+        describe('Filling orders', async () => {
+            describe('Success', async () => {
+            beforeEach(async () => {
+                transaction = await exchange.connect(user2).fillOrder('1')
+                result = await transaction.wait()
+            })
+
+
+            it("executes the trade and charges fees", async() =>{
+                expect(await exchange.balanceOf(token1.address, user1.address)).to.equal(tokens(0))
+                expect(await exchange.balanceOf(token1.address, user2.address)).to.equal(tokens(1))
+                expect(await exchange.balanceOf(token1.address, feeAccount.address)).to.equal(tokens(0))
+
+                expect(await exchange.balanceOf(token2.address, user1.address)).to.equal(tokens(1))
+                expect(await exchange.balanceOf(token2.address, user2.address)).to.equal(tokens(0.9))
+                expect(await exchange.balanceOf(token2.address, feeAccount.address)).to.equal(tokens(0.1))
+
+            })
+
+            it('updates Filled Order', async () => {
+                expect(await exchange.orderFilled(1)).to.equal(true)
+            })
+
+            it('emits a Trade event', async () => {
+                const event = result.events[0]
+                expect(event.event).to.equal('Trade')
+
+                const args = event.args
+                expect(args.id).to.equal(1)
+                expect(args.user).to.equal(user2.address)
+                expect(args.tokenGet).to.equal(token2.address)
+                expect(args.amountGet).to.equal(tokens(1))
+                expect(args.tokenGive).to.equal(token1.address)
+                expect(args.amountGive).to.equal(tokens(1))
+                expect(args.creator).to.equal(user1.address)
+                expect(args.timestamp).to.at.least(1)
+              })
 
         })
 
-      })
+        describe('Failure', async() => {
+            it('rejects invalid order Ids',async ()  => {
+                const invalidOrderId= 99999;
+                await expect(exchange.connect(user2).fillOrder(invalidOrderId)).to.be.reverted
+            })
+            it('rejects already filled order',async ()  => {
+                transaction = await exchange.connect(user2).fillOrder(1)
+                await transaction.wait()
+                await expect(exchange.connect(user2).fillOrder(1)).to.be.reverted
+            })
+            it('rejects canceled orders',async ()  => {
+                transaction = await exchange.connect(user1).cancelOrder(1)
+                result = await transaction.wait()
+                await expect(exchange.connect(user2).fillOrder(1)).to.be.reverted
+            })
+        })
 
     })
+  })
+})
