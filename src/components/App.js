@@ -2,13 +2,14 @@ import { useEffect } from 'react';
 import config from '../config.json';
 import { useDispatch } from 'react-redux';
 import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange } from '../store/interactions';
-import Navbar from './Navbar.js';
 
+import Navbar from './Navbar.js';
+import Markets from './Markets.js';
 
 function App() {
   const dispatch = useDispatch();
   const loadBlockchainData = async () => {
-       // Connect Ethers to blockchain
+    // Connect Ethers to blockchain
     const provider = loadProvider(dispatch)
 
     //Fetch curretn network chainId(e.g. hardhat: 31337)
@@ -20,8 +21,8 @@ function App() {
     })
 
     //Fetch current account and balance from Metamask
-    window.ethereum.on("accountsChanged", () =>{
-       loadAccount(provider, dispatch)
+    window.ethereum.on("accountsChanged", () => {
+      loadAccount(provider, dispatch)
     })
 
     // Load token Smart Contracts
@@ -43,12 +44,12 @@ function App() {
   return (
     <div>
 
-      <Navbar/>
+      <Navbar />
 
       <main className='exchange grid'>
         <section className='exchange__section--left grid'>
 
-          {/* Markets */}
+          <Markets />
 
           {/* Balance */}
 
