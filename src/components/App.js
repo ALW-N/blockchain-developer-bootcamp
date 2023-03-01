@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import config from '../config.json';
 import { useDispatch } from 'react-redux';
-import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange } from '../store/interactions';
+import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange, subscribeToEvents } from '../store/interactions';
 
 import Navbar from './Navbar.js';
 import Markets from './Markets.js';
+import Balance from "./Balance.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -32,9 +33,10 @@ function App() {
 
     //Load exchange smart contracts
     const exchangeConfig = config[chainId].exchange
-    await loadExchange(provider, exchangeConfig.address, dispatch)
+    const exchange = await loadExchange(provider, exchangeConfig.address, dispatch)
 
-
+    //Listen to events
+    subscribeToEvents(exchange, dispatch)
   }
 
   useEffect(() => {
@@ -51,7 +53,7 @@ function App() {
 
           <Markets />
 
-          {/* Balance */}
+          <Balance />
 
           {/* Order */}
 
