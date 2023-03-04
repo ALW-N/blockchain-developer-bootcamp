@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import config from '../config.json';
 import { useDispatch } from 'react-redux';
-import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange, subscribeToEvents } from '../store/interactions';
+import { loadProvider, loadNetwork, loadAccount, loadTokens, loadExchange, loadAllOrders, subscribeToEvents } from '../store/interactions';
 
 import Navbar from './Navbar.js';
 import Markets from './Markets.js';
 import Balance from "./Balance.js";
 import Order from "./Order.js";
+import OrderBook from "./OrderBook.js";
 
 function App() {
   const dispatch = useDispatch();
@@ -35,6 +36,8 @@ function App() {
     //Load exchange smart contracts
     const exchangeConfig = config[chainId].exchange
     const exchange = await loadExchange(provider, exchangeConfig.address, dispatch)
+
+    loadAllOrders(provider, exchange, dispatch)
 
     //Listen to events
     subscribeToEvents(exchange, dispatch)
@@ -67,7 +70,7 @@ function App() {
 
           {/* Trades */}
 
-          {/* OrderBook */}
+          <OrderBook/>
 
         </section>
       </main>
