@@ -9,6 +9,7 @@ import Balance from "./Balance.js";
 import Order from "./Order.js";
 import OrderBook from "./OrderBook.js";
 import PriceChart from "./PriceChart.js";
+import Transactions from "./Transactions";
 import Trades from "./Trades.js";
 
 function App() {
@@ -68,7 +69,7 @@ function App() {
 
           <PriceChart />
 
-          {/* Transactions */}
+         <Transactions />
 
           <Trades />
 
