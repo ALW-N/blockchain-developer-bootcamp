@@ -234,7 +234,7 @@ export const exchange = (state = DEFAULT_EXCHANGE_STATE, action) => {
         case 'NEW_ORDER_FAIL':
             return {
                 ...state,
-                transaction: {
+                transaction: {  
                     transactionType: 'New Order',
                     isPending: false,
                     isSuccessful: false,
