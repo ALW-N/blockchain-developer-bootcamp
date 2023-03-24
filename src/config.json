@@ -14,7 +14,35 @@
     },
     "explorerURL": "#"
   },
-  "5": {
-    "explorerURL": "https://goerli.etherscan.io/"
+  "11155111": {
+    "exchange": {
+      "address": "0xAfe3E635faD0Ac8a80f3Bb530FB1D6D45a0b09A4"
+    },
+    "EDGE": {
+      "address": "0x9CDc8AF13e7705C097654D744aB6D7201493CF6e"
+    },
+    "mETH": {
+      "address": "0x1CD884a050cE75831C7110c3061a263dEABcB9c1"
+    },
+    "mDAI": {
+      "address": "0xc45B6323E10513e856c34f9104cc81F54BCc3D74"
+    },
+    "explorerURL": "https://sepolia.etherscan.io/"
+  },
+  "80001": {
+    "exchange": {
+      "address": "0xFCF33ADfa179545Eb3022E1434CDc951228146c6"
+    },
+    "EDGE": {
+      "address": "0x308aC86967fAA1b20296360458F1Ed8a2E0c0b77"
+    },
+    "mETH": {
+      "address": "0x7F48E38719fBce5A42660e976b7be273EB544D70"
+    },
+    "mDAI": {
+      "address": "0x17Fac2Cd6fD974449988aF631d6aAa248c7f61e1"
+    },
+    "explorerURL": "https://mumbai.polygonscan.com/"
   }
 }
+
